@@ -1,0 +1,6 @@
+env/
+README.md
+docker-compose.yaml
+.gitignore
+.env
+postgres-data

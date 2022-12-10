@@ -10,3 +10,5 @@ class PersonAdmin(admin.ModelAdmin):
     list_filter = ("is_staff", "is_active", "is_superuser")
     exclude = ("password",)
     readonly_fields = ("date_joined", "last_login")
+
+
