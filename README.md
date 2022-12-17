@@ -4,13 +4,9 @@
 
 Todolist is a task manager and to-do list app.
 
-## 💾 Installation
+Site: [http://yuzudev.ga/](http://yuzudev.ga/)
 
-```
-$ git clone https://github.com/YuZu-original/todolist.git
-```
-
-or [download](https://github.com/YuZu-original/todolist/archive/refs/heads/master.zip) zip archive.
+## 🛠 Setup
 
 ### 🧾 Requirements
 
@@ -18,43 +14,23 @@ or [download](https://github.com/YuZu-original/todolist/archive/refs/heads/maste
 - Pip
 - Docker
 
-## 🛠 Setup
-
-1. **Go to the folder.**
-   
-   Open folder in the terminal.
-
-2. **Create and activate venv.**
-
-    **Windows**:
-    
-    ```sh
-    python -m venv venv
-    venv\Scripts\activate
-    ```
-    
-    **Linux/MacOS**
-    
-    ```sh
-    python3 -m venv venv
-    source venv/bin/activate
-    ```
-3. **Install requirements**
-   
-   ```sh
-   pip install -r requirements.txt
-   ```
+If you want to use VK login, you must configure `SOCIAL_AUTH_VK_OAUTH2_KEY` and `SOCIAL_AUTH_VK_OAUTH2_SECRET` in `.env`.
 
 ## 🕹 Usage
 
-Create postgresql docker container.
-
-```sh
-docker run --name todolist_postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres
+### Build
+```
+$ docker-compose build
 ```
 
-And run server:
-- Linux\MacOS: `python3 manage.py runserver`
-- Windows: `python manage.py runserver`
+### Start
+```
+$ docker-compose up -d
+```
 
-Open **[http://127.0.0.1:8000/](http://127.0.0.1:8000/)**
+### Stop
+```
+$ docker-compose down
+```
+
+Open **[http://localhost/](http://localhost/)**
