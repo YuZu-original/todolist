@@ -1,10 +1,10 @@
 from django.contrib.auth import login, logout
 from rest_framework import permissions
-from rest_framework.generics import CreateAPIView, GenericAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import CreateAPIView, GenericAPIView, RetrieveUpdateDestroyAPIView, UpdateAPIView
 from rest_framework.response import Response
 
 from core.models import User
-from core.serializers import CreateUserSerializer, LoginUserSerializer, UserSerializer
+from core.serializers import CreateUserSerializer, LoginUserSerializer, UserSerializer, UpdatePasswordSerializer
 
 
 class SignupView(CreateAPIView):
@@ -40,3 +40,12 @@ class ProfileView(RetrieveUpdateDestroyAPIView):
     def delete(self, request, *args, **kwargs):
         logout(request)
         return Response({})
+
+
+class UpdatePasswordView(UpdateAPIView):
+    model = User
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = UpdatePasswordSerializer
+
+    def get_object(self):
+        return self.request.user
