@@ -4,7 +4,7 @@
 
 Todolist is a task manager and to-do list app.
 
-Site: [http://yuzudev.ga/](http://yuzudev.ga/)
+Site: **[yuzudev.ga](http://yuzudev.ga/)**
 
 ## 🛠 Setup
 
@@ -14,8 +14,7 @@ Site: [http://yuzudev.ga/](http://yuzudev.ga/)
 - Pip
 - Docker
 
-If you want to use VK login, you must configure `SOCIAL_AUTH_VK_OAUTH2_KEY` and `SOCIAL_AUTH_VK_OAUTH2_SECRET` in `.env`.
-
+If you want to use VK login, you must configure `SOCIAL_AUTH_VK_OAUTH2_KEY` and `SOCIAL_AUTH_VK_OAUTH2_SECRET` in `.env`. [https://dev.vk.com/mini-apps/management/settings](https://dev.vk.com/mini-apps/management/settings)
 ## 🕹 Usage
 
 ### Build
