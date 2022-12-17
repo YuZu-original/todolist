@@ -14,7 +14,8 @@ class SignupView(CreateAPIView):
 
     def perform_create(self, serializer):
         super().perform_create(serializer)
-        login(self.request, user=serializer.user)
+        login(self.request, user=serializer.user, backend="django.contrib.auth.backends.ModelBackend",)
+
 
 
 class LoginView(GenericAPIView):
