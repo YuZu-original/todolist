@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'social_django',
     'core',
+    'goals',
 ]
 
 MIDDLEWARE = [
@@ -89,7 +90,7 @@ DATABASES = {
         'NAME': env.str('DB_NAME', 'todolist_postgres'),
         'USER': env.str('DB_USER', 'postgres'),
         'PASSWORD': env.str('DB_PASSWORD', 'postgres'),
-        'HOST': env.str('DB_HOST', 'postgres'),
+        'HOST': env.str('DB_HOST', 'localhost'),
         'PORT': env.str('DB_PORT', '5432'),
     }
 }

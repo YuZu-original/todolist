@@ -1,8 +1,8 @@
 DEBUG=True
-DB_NAME=postgres
+DB_NAME=todolist_postgres
 DB_USER=postgres
 DB_PASSWORD=postgres
-DB_HOST=localhost
+DB_HOST=postgres
 DB_PORT=5432
 SOCIAL_AUTH_VK_OAUTH2_KEY=
 SOCIAL_AUTH_VK_OAUTH2_SECRET=

@@ -16,7 +16,7 @@ services:
       migrations:
         condition: service_completed_successfully
     volumes:
-      - ./.env:/app/.env
+      - ./.docker_env:/app/.env
   migrations:
     build:
       context: .
@@ -24,7 +24,7 @@ services:
       postgres:
         condition: service_healthy
     volumes:
-      - ./.env:/app/.env
+      - ./.docker_env:/app/.env
     command: python manage.py migrate
   postgres:
     image: postgres:latest
