@@ -17,14 +17,9 @@ Site: **[yuzudev.ga](http://yuzudev.ga/)**
 If you want to use VK login, you must configure `SOCIAL_AUTH_VK_OAUTH2_KEY` and `SOCIAL_AUTH_VK_OAUTH2_SECRET` in `.env`. [https://dev.vk.com/mini-apps/management/settings](https://dev.vk.com/mini-apps/management/settings)
 ## 🕹 Usage
 
-### Build
-```
-$ docker-compose build
-```
-
 ### Start
 ```
-$ docker-compose up -d
+$ docker-compose up --build -d
 ```
 
 ### Stop
