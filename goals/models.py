@@ -53,3 +53,13 @@ class Goal(DatesModelMixin):
     status = models.PositiveSmallIntegerField(verbose_name="Статус", choices=Status.choices, default=Status.to_do)
     priority = models.PositiveSmallIntegerField(verbose_name="Приоритет", choices=Priority.choices,
                                                 default=Priority.medium)
+
+
+class GoalComment(DatesModelMixin):
+    class Meta:
+        verbose_name = "Комментарий"
+        verbose_name_plural = "Комментарии"
+
+    user = models.ForeignKey(User, verbose_name="Автор", related_name="goal_comments", on_delete=models.PROTECT)
+    goal = models.ForeignKey(Goal, verbose_name="Цель", related_name="goal_comments", on_delete=models.PROTECT)
+    text = models.TextField(verbose_name="Текст")
