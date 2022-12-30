@@ -92,13 +92,13 @@ class GoalCategoryCreateSerializer(serializers.ModelSerializer):
 
     def validate_board(self, value):
         if value.is_deleted:
-            raise serializers.ValidationError("can't create in deleted board")
+            raise serializers.ValidationError("not allowed in deleted board")
         if not BoardParticipant.objects.filter(
-            board=value,
-            role__in=[BoardParticipant.Role.owner, BoardParticipant.Role.writer],
-            user=self.context["request"].user,
+                board=value,
+                role__in=[BoardParticipant.Role.owner, BoardParticipant.Role.writer],
+                user=self.context["request"].user,
         ).exists():
-            raise serializers.ValidationError("access denied")
+            raise serializers.ValidationError("you do not have permission to create goal category in this board")
         return value
 
 
@@ -126,9 +126,12 @@ class GoalCreateSerializer(serializers.ModelSerializer):
         if value.is_deleted:
             raise serializers.ValidationError("not allowed in deleted category")
 
-        if value.user != self.context["request"].user:
-            raise serializers.ValidationError("not owner of category")
-
+        if not BoardParticipant.objects.filter(
+                board_id=value.board_id,
+                role__in=[BoardParticipant.Role.owner, BoardParticipant.Role.writer],
+                user=self.context["request"].user,
+        ).exists():
+            raise serializers.ValidationError("you do not have permission to create goal in this board")
         return value
 
 
@@ -144,8 +147,8 @@ class GoalSerializer(serializers.ModelSerializer):
         if value.is_deleted:
             raise serializers.ValidationError("not allowed in deleted category")
 
-        if value.user != self.context["request"].user:
-            raise serializers.ValidationError("not owner of category")
+        if self.instance.category.board_id != value.board_id:
+            raise serializers.ValidationError("this category does not belong to this board")
         return value
 
 
