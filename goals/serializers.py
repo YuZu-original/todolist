@@ -90,6 +90,17 @@ class GoalCategoryCreateSerializer(serializers.ModelSerializer):
         read_only_fields = ("id", "created", "updated", "user")
         fields = "__all__"
 
+    def validate_board(self, value):
+        if value.is_deleted:
+            raise serializers.ValidationError("can't create in deleted board")
+        if not BoardParticipant.objects.filter(
+            board=value,
+            role__in=[BoardParticipant.Role.owner, BoardParticipant.Role.writer],
+            user=self.context["request"].user,
+        ).exists():
+            raise serializers.ValidationError("access denied")
+        return value
+
 
 class GoalCategorySerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
@@ -97,7 +108,7 @@ class GoalCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = GoalCategory
         fields = "__all__"
-        read_only_fields = ("id", "created", "updated", "user")
+        read_only_fields = ("id", "created", "updated", "user", "board")
 
 
 # Goal
