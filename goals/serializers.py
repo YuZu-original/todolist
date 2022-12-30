@@ -162,6 +162,15 @@ class CommentCreateSerializer(serializers.ModelSerializer):
         fields = "__all__"
         read_only_fields = ("id", "created", "updated", "user")
 
+    def validate_goal(self, value):
+        if not BoardParticipant.objects.filter(
+                board_id=value.category.board_id,
+                role__in=[BoardParticipant.Role.owner, BoardParticipant.Role.writer],
+                user=self.context["request"].user,
+        ).exists():
+            raise serializers.ValidationError("you do not have permission to create comment in this board")
+        return value
+
 
 class CommentSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
