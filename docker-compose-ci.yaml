@@ -16,6 +16,14 @@ services:
         condition: service_completed_successfully
     volumes:
       - ./.env:/app/.env
+  bot:
+    image: yuzudev/todolist:$GITHUB_REF_NAME-$GITHUB_RUN_ID
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./.env:/app/.env
+    command: python manage.py runbot
   migrations:
     image: yuzudev/todolist:$GITHUB_REF_NAME-$GITHUB_RUN_ID
     depends_on:
