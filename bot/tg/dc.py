@@ -23,7 +23,6 @@ class Chat:
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     username: Optional[str] = None
-    title: Optional[str] = None
 
     class Meta:
         unknown = EXCLUDE
