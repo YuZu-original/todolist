@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'social_django',
     'core',
     'goals',
+    'bot',
 ]
 
 MIDDLEWARE = [
