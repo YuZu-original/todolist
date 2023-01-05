@@ -81,7 +81,7 @@ class Command(BaseCommand):
             self.tg_client.send_message(message.chat.id, "Неизвестная команда :V")
 
     def send_tasks(self, message: Message, tg_user: TgUser):
-        goals = Goal.objects.filter(user=tg_user.user, category__is_deleted=False)
+        goals = Goal.objects.filter(user=tg_user.user, category__is_deleted=False).exclude(status=Goal.Status.archived)
         if goals.count() > 0:
             msg = "\n".join(f"#{goal.id} {goal.title}" for goal in goals)
             self.tg_client.send_message(message.chat.id, msg)
