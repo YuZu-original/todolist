@@ -99,7 +99,7 @@ class Command(BaseCommand):
 
     def input_cat_for_create_goal_state(self, message: Message, tg_user: TgUser):
         if message.text == '/cancel':
-            self.states_storage.pop(tg_user.tg_id, None)
+            self.goals_for_create.pop(tg_user.tg_id, None)
             self.cancel(message, tg_user)
             return
 
@@ -117,7 +117,7 @@ class Command(BaseCommand):
 
     def input_title_for_create_goal_state(self, message: Message, tg_user: TgUser):
         if message.text == '/cancel':
-            self.states_storage.pop(tg_user.tg_id, None)
+            self.goals_for_create.pop(tg_user.tg_id, None)
             self.cancel(message, tg_user)
             return
 
