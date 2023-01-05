@@ -15,7 +15,12 @@ class TgClient:
         resp = requests.get(url, params={"offset": offset, "timeout": timeout})
         return GetUpdatesResponse.Schema().load(resp.json())
 
-    def send_message(self, chat_id: int, text: str) -> SendMessageResponse:
+    def send_message(self, chat_id: int, text: str, parse_mode: str | None = None) -> SendMessageResponse:
         url = self.get_url("sendMessage")
-        resp = requests.post(url, json={"chat_id": chat_id, "text": text})
+
+        json_data = {"chat_id": chat_id, "text": text}
+        if parse_mode and parse_mode in ["MarkdownV2", "HTML", "Markdown"]:
+            json_data |= {"parse_mode": parse_mode}
+
+        resp = requests.post(url, json=json_data)
         return SendMessageResponse.Schema().load(resp.json())
