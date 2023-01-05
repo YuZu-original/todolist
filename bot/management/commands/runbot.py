@@ -1,3 +1,5 @@
+from enum import Flag, auto
+
 from django.core.management import BaseCommand
 
 from bot.models import TgUser
@@ -8,12 +10,12 @@ from bot.tg.dc import Message
 from goals.models import Goal, GoalCategory
 
 
-class States:
-    start = 1
-    verification = 2
-    idle = 3
-    input_cat_for_create_goal = 4
-    input_title_for_create_goal = 5
+class States(Flag):
+    start = auto()
+    verification = auto()
+    idle = auto()
+    input_cat_for_create_goal = auto()
+    input_title_for_create_goal = auto()
 
 
 class Command(BaseCommand):
@@ -97,6 +99,7 @@ class Command(BaseCommand):
 
     def input_cat_for_create_goal_state(self, message: Message, tg_user: TgUser):
         if message.text == '/cancel':
+            self.states_storage.pop(tg_user.tg_id, None)
             self.cancel(message, tg_user)
             return
 
@@ -105,22 +108,26 @@ class Command(BaseCommand):
         self.goals_for_create[tg_user.tg_id] = {"cat": None}
         if category:
             self.goals_for_create[tg_user.tg_id]["cat"] = category
-            self.tg_client.send_message(message.chat.id, f"Отлично!")
-            self.tg_client.send_message(message.chat.id, f"Теперь придумайте название цели")
+            self.tg_client.send_message(message.chat.id, "Отлично!")
+            self.tg_client.send_message(message.chat.id, "Теперь придумайте название цели")
             self.states_storage[tg_user.tg_id] = States.input_title_for_create_goal
             return
         else:
-            self.tg_client.send_message(message.chat.id, f"У вас нет такой категории :V\nПопробуйте еще раз :D")
+            self.tg_client.send_message(message.chat.id, "У вас нет такой категории :V\nПопробуйте еще раз :D")
 
     def input_title_for_create_goal_state(self, message: Message, tg_user: TgUser):
         if message.text == '/cancel':
+            self.states_storage.pop(tg_user.tg_id, None)
             self.cancel(message, tg_user)
             return
+
         category: GoalCategory = self.goals_for_create[tg_user.tg_id]["cat"]
         goal = Goal.objects.create(user=category.user, title=message.text, category=category)
-        self.tg_client.send_message(message.chat.id, f"Ура! Ваша цель создана:\nhttp://yuzudev.ga/boards/{category.board.id}/goals?goal={goal.id}")
+        self.tg_client.send_message(message.chat.id,
+                                    "Ура! Ваша цель создана:\n" +
+                                    f"http://yuzudev.ga/boards/{category.board.id}/goals?goal={goal.id}")
         self.states_storage[tg_user.tg_id] = States.idle
 
     def cancel(self, message: Message, tg_user: TgUser):
-        self.tg_client.send_message(message.chat.id, f"Операция отменена")
+        self.tg_client.send_message(message.chat.id, "Операция отменена")
         self.states_storage[tg_user.tg_id] = States.idle
