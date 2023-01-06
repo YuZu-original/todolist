@@ -1,6 +1,10 @@
+.github/
 venv/
 README.md
 docker-compose.yaml
 .gitignore
 .env
 postgres-data
+.flake8
+pyproject.toml
+requirements-dev.txt

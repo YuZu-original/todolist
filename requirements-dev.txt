@@ -1,0 +1,6 @@
+pre-commit
+black
+autoflake
+pyupgrade
+reorder-python-imports
+yesqa

@@ -7,7 +7,9 @@ from core.models import User
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, validators=[validate_password])
+    password = serializers.CharField(
+        write_only=True, validators=[validate_password]
+    )
     password_repeat = serializers.CharField(write_only=True)
 
     def validate(self, attrs: dict):
@@ -25,7 +27,15 @@ class CreateUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("id", "username", "first_name", "last_name", "email", "password", "password_repeat",)
+        fields = (
+            "id",
+            "username",
+            "first_name",
+            "last_name",
+            "email",
+            "password",
+            "password_repeat",
+        )
 
 
 class LoginUserSerializer(serializers.Serializer):
@@ -47,12 +57,20 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         read_only_fields = ("id",)
-        fields = ("id", "username", "first_name", "last_name", "email",)
+        fields = (
+            "id",
+            "username",
+            "first_name",
+            "last_name",
+            "email",
+        )
 
 
 class UpdatePasswordSerializer(serializers.ModelSerializer):
     old_password = serializers.CharField(write_only=True)
-    new_password = serializers.CharField(write_only=True, validators=[validate_password])
+    new_password = serializers.CharField(
+        write_only=True, validators=[validate_password]
+    )
 
     def validate(self, attrs):
         old_password = attrs.get("old_password")

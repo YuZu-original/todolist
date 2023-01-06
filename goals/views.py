@@ -1,18 +1,34 @@
 from django.db import transaction
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework import permissions, filters
+from rest_framework import filters
+from rest_framework import permissions
+from rest_framework.generics import CreateAPIView
+from rest_framework.generics import ListAPIView
+from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.pagination import LimitOffsetPagination
 
 from goals.filters import GoalDateFilter
-from goals.models import GoalCategory, Goal, GoalComment, Board
-from goals.permissions import BoardPermissions, GoalCategoryPermissions, GoalPermissions, CommentPermissions
-from goals.serializers import GoalCategorySerializer, GoalCategoryCreateSerializer, GoalCreateSerializer, \
-    GoalSerializer, CommentCreateSerializer, CommentSerializer, BoardSerializer, BoardCreateSerializer, \
-    BoardListSerializer
+from goals.models import Board
+from goals.models import Goal
+from goals.models import GoalCategory
+from goals.models import GoalComment
+from goals.permissions import BoardPermissions
+from goals.permissions import CommentPermissions
+from goals.permissions import GoalCategoryPermissions
+from goals.permissions import GoalPermissions
+from goals.serializers import BoardCreateSerializer
+from goals.serializers import BoardListSerializer
+from goals.serializers import BoardSerializer
+from goals.serializers import CommentCreateSerializer
+from goals.serializers import CommentSerializer
+from goals.serializers import GoalCategoryCreateSerializer
+from goals.serializers import GoalCategorySerializer
+from goals.serializers import GoalCreateSerializer
+from goals.serializers import GoalSerializer
 
 
 # Board
+
 
 class BoardCreateView(CreateAPIView):
     model = Board
@@ -31,7 +47,9 @@ class BoardListView(ListAPIView):
     ordering = ["title"]
 
     def get_queryset(self):
-        return Board.objects.filter(participants__user=self.request.user, is_deleted=False)
+        return Board.objects.filter(
+            participants__user=self.request.user, is_deleted=False
+        )
 
 
 class BoardView(RetrieveUpdateDestroyAPIView):
@@ -40,18 +58,23 @@ class BoardView(RetrieveUpdateDestroyAPIView):
     serializer_class = BoardSerializer
 
     def get_queryset(self):
-        return Board.objects.filter(participants__user=self.request.user, is_deleted=False)
+        return Board.objects.filter(
+            participants__user=self.request.user, is_deleted=False
+        )
 
     def perform_destroy(self, instance: Board):
         with transaction.atomic():
             instance.is_deleted = True
             instance.save()
             instance.categories.update(is_deleted=True)
-            Goal.objects.filter(category__board=instance).update(status=Goal.Status.archived)
+            Goal.objects.filter(category__board=instance).update(
+                status=Goal.Status.archived
+            )
         return instance
 
 
 # GoalCategory
+
 
 class GoalCategoryCreateView(CreateAPIView):
     model = GoalCategory
@@ -74,7 +97,9 @@ class GoalCategoryListView(ListAPIView):
     search_fields = ["title"]
 
     def get_queryset(self):
-        return GoalCategory.objects.filter(board__participants__user=self.request.user, is_deleted=False)
+        return GoalCategory.objects.filter(
+            board__participants__user=self.request.user, is_deleted=False
+        )
 
 
 class GoalCategoryView(RetrieveUpdateDestroyAPIView):
@@ -83,16 +108,21 @@ class GoalCategoryView(RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated, GoalCategoryPermissions]
 
     def get_queryset(self):
-        return GoalCategory.objects.filter(board__participants__user=self.request.user, is_deleted=False)
+        return GoalCategory.objects.filter(
+            board__participants__user=self.request.user, is_deleted=False
+        )
 
     def perform_destroy(self, instance):
         instance.is_deleted = True
         instance.save()
-        Goal.objects.filter(category=instance).update(status=Goal.Status.archived)
+        Goal.objects.filter(category=instance).update(
+            status=Goal.Status.archived
+        )
         return instance
 
 
 # Goal
+
 
 class GoalCreateView(CreateAPIView):
     model = Goal
@@ -116,7 +146,9 @@ class GoalListView(ListAPIView):
     ordering_fields = ["priority", "due_date"]
 
     def get_queryset(self):
-        return Goal.objects.filter(category__board__participants__user=self.request.user)
+        return Goal.objects.filter(
+            category__board__participants__user=self.request.user
+        )
 
 
 class GoalView(RetrieveUpdateDestroyAPIView):
@@ -125,7 +157,9 @@ class GoalView(RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated, GoalPermissions]
 
     def get_queryset(self):
-        return Goal.objects.filter(category__board__participants__user=self.request.user)
+        return Goal.objects.filter(
+            category__board__participants__user=self.request.user
+        )
 
     def perform_destroy(self, instance):
         instance.status = Goal.Status.archived
@@ -134,6 +168,7 @@ class GoalView(RetrieveUpdateDestroyAPIView):
 
 
 # Comment
+
 
 class CommentCreateView(CreateAPIView):
     model = GoalComment
@@ -147,7 +182,9 @@ class CommentView(RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated, CommentPermissions]
 
     def get_queryset(self):
-        return GoalComment.objects.filter(goal__category__board__participants__user=self.request.user)
+        return GoalComment.objects.filter(
+            goal__category__board__participants__user=self.request.user
+        )
 
 
 class CommentListView(ListAPIView):
@@ -160,4 +197,6 @@ class CommentListView(ListAPIView):
     ordering = ["-id"]
 
     def get_queryset(self):
-        return GoalComment.objects.filter(goal__category__board__participants__user=self.request.user)
+        return GoalComment.objects.filter(
+            goal__category__board__participants__user=self.request.user
+        )

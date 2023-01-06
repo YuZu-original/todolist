@@ -1,5 +1,7 @@
-from django.db import migrations, transaction
+from django.db import migrations
+from django.db import transaction
 from django.utils import timezone
+
 
 def create_objects(apps, schema_editor):
     User = apps.get_model("core", "User")
@@ -12,16 +14,15 @@ def create_objects(apps, schema_editor):
             new_board = Board.objects.create(
                 title="Мои цели",
                 created=timezone.now(),
-                updated=timezone.now()
+                updated=timezone.now(),
             )
             BoardParticipant.objects.create(
                 user=user,
                 board=new_board,
                 role=1,
                 created=timezone.now(),
-                updated=timezone.now()
+                updated=timezone.now(),
             )
-
 
             GoalCategory.objects.filter(user=user).update(board=new_board)
 
@@ -29,9 +30,7 @@ def create_objects(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('goals', '0004_board_goalcategory_board_boardparticipant'),
+        ("goals", "0004_board_goalcategory_board_boardparticipant"),
     ]
 
-    operations = [
-        migrations.RunPython(create_objects)
-    ]
+    operations = [migrations.RunPython(create_objects)]

@@ -3,10 +3,15 @@ from rest_framework import serializers
 
 from core.models import User
 from core.serializers import UserSerializer
-from goals.models import GoalCategory, Goal, GoalComment, BoardParticipant, Board
+from goals.models import Board
+from goals.models import BoardParticipant
+from goals.models import Goal
+from goals.models import GoalCategory
+from goals.models import GoalComment
 
 
 # BoardParticipant
+
 
 class BoardParticipantSerializer(serializers.ModelSerializer):
     role = serializers.ChoiceField(
@@ -23,6 +28,7 @@ class BoardParticipantSerializer(serializers.ModelSerializer):
 
 
 # Board
+
 
 class BoardCreateSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
@@ -61,12 +67,21 @@ class BoardSerializer(serializers.ModelSerializer):
                 if old_participant.user_id not in new_by_id:
                     old_participant.delete()
                     continue
-                if old_participant.role != new_by_id[old_participant.user_id]["role"]:
-                    old_participant.role = new_by_id[old_participant.user_id]["role"]
+                if (
+                    old_participant.role
+                    != new_by_id[old_participant.user_id]["role"]
+                ):
+                    old_participant.role = new_by_id[old_participant.user_id][
+                        "role"
+                    ]
                     old_participant.save()
                 new_by_id.pop(old_participant.user_id)
             for new_part in new_by_id.values():
-                BoardParticipant.objects.create(board=instance, user=new_part["user"], role=new_part["role"])
+                BoardParticipant.objects.create(
+                    board=instance,
+                    user=new_part["user"],
+                    role=new_part["role"],
+                )
 
             instance.title = validated_data["title"]
             instance.save()
@@ -82,6 +97,7 @@ class BoardListSerializer(serializers.ModelSerializer):
 
 # GoalCategory
 
+
 class GoalCategoryCreateSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
@@ -94,11 +110,16 @@ class GoalCategoryCreateSerializer(serializers.ModelSerializer):
         if value.is_deleted:
             raise serializers.ValidationError("not allowed in deleted board")
         if not BoardParticipant.objects.filter(
-                board=value,
-                role__in=[BoardParticipant.Role.owner, BoardParticipant.Role.writer],
-                user=self.context["request"].user,
+            board=value,
+            role__in=[
+                BoardParticipant.Role.owner,
+                BoardParticipant.Role.writer,
+            ],
+            user=self.context["request"].user,
         ).exists():
-            raise serializers.ValidationError("you do not have permission to create goal category in this board")
+            raise serializers.ValidationError(
+                "you do not have permission to create goal category in this board"
+            )
         return value
 
 
@@ -113,8 +134,11 @@ class GoalCategorySerializer(serializers.ModelSerializer):
 
 # Goal
 
+
 class GoalCreateSerializer(serializers.ModelSerializer):
-    category = serializers.PrimaryKeyRelatedField(queryset=GoalCategory.objects.all())
+    category = serializers.PrimaryKeyRelatedField(
+        queryset=GoalCategory.objects.all()
+    )
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
@@ -124,14 +148,21 @@ class GoalCreateSerializer(serializers.ModelSerializer):
 
     def validate_category(self, value):
         if value.is_deleted:
-            raise serializers.ValidationError("not allowed in deleted category")
+            raise serializers.ValidationError(
+                "not allowed in deleted category"
+            )
 
         if not BoardParticipant.objects.filter(
-                board_id=value.board_id,
-                role__in=[BoardParticipant.Role.owner, BoardParticipant.Role.writer],
-                user=self.context["request"].user,
+            board_id=value.board_id,
+            role__in=[
+                BoardParticipant.Role.owner,
+                BoardParticipant.Role.writer,
+            ],
+            user=self.context["request"].user,
         ).exists():
-            raise serializers.ValidationError("you do not have permission to create goal in this board")
+            raise serializers.ValidationError(
+                "you do not have permission to create goal in this board"
+            )
         return value
 
 
@@ -145,14 +176,19 @@ class GoalSerializer(serializers.ModelSerializer):
 
     def validate_category(self, value):
         if value.is_deleted:
-            raise serializers.ValidationError("not allowed in deleted category")
+            raise serializers.ValidationError(
+                "not allowed in deleted category"
+            )
 
         if self.instance.category.board_id != value.board_id:
-            raise serializers.ValidationError("this category does not belong to this board")
+            raise serializers.ValidationError(
+                "this category does not belong to this board"
+            )
         return value
 
 
 # Comment
+
 
 class CommentCreateSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
@@ -164,11 +200,16 @@ class CommentCreateSerializer(serializers.ModelSerializer):
 
     def validate_goal(self, value):
         if not BoardParticipant.objects.filter(
-                board_id=value.category.board_id,
-                role__in=[BoardParticipant.Role.owner, BoardParticipant.Role.writer],
-                user=self.context["request"].user,
+            board_id=value.category.board_id,
+            role__in=[
+                BoardParticipant.Role.owner,
+                BoardParticipant.Role.writer,
+            ],
+            user=self.context["request"].user,
         ).exists():
-            raise serializers.ValidationError("you do not have permission to create comment in this board")
+            raise serializers.ValidationError(
+                "you do not have permission to create comment in this board"
+            )
         return value
 
 

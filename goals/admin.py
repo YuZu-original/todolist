@@ -1,6 +1,8 @@
 from django.contrib import admin
 
-from goals.models import GoalCategory, Goal, GoalComment
+from goals.models import Goal
+from goals.models import GoalCategory
+from goals.models import GoalComment
 
 
 class GoalCategoryAdmin(admin.ModelAdmin):

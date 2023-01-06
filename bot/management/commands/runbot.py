@@ -1,13 +1,14 @@
-from enum import Flag, auto
+from enum import auto
+from enum import Flag
 
+from django.conf import settings
 from django.core.management import BaseCommand
 
 from bot.models import TgUser
 from bot.tg.client import TgClient
-from django.conf import settings
-
 from bot.tg.dc import Message
-from goals.models import Goal, GoalCategory
+from goals.models import Goal
+from goals.models import GoalCategory
 
 
 class States(Flag):
@@ -42,7 +43,7 @@ class Command(BaseCommand):
             defaults={
                 "tg_chat_id": message.chat.id,
                 "username": message.from_.username,
-            }
+            },
         )
         tg_user_id = message.from_.id
 
@@ -51,7 +52,10 @@ class Command(BaseCommand):
             self.states_storage[tg_user_id] = States.start
         elif not tg_user.user:
             self.states_storage[tg_user_id] = States.verification
-        elif self.states_storage.get(tg_user_id, States.verification) == States.verification:
+        elif (
+            self.states_storage.get(tg_user_id, States.verification)
+            == States.verification
+        ):
             self.states_storage[tg_user_id] = States.idle
 
         match self.states_storage.get(tg_user_id, States.idle):
@@ -69,63 +73,100 @@ class Command(BaseCommand):
     def verification_state(self, message: Message, tg_user: TgUser):
         tg_user.set_verification_code()
         tg_user.save(update_fields=["verification_code"])
-        self.tg_client.send_message(message.chat.id, f"Код подтверждения -> {tg_user.verification_code}")
+        self.tg_client.send_message(
+            message.chat.id,
+            f"Код подтверждения -> {tg_user.verification_code}",
+        )
 
     def idle_state(self, message: Message, tg_user: TgUser):
         if message.text == "/goals":
             self.send_tasks(message, tg_user)
         elif message.text == "/create":
-            self.states_storage[tg_user.tg_id] = States.input_cat_for_create_goal
+            self.states_storage[
+                tg_user.tg_id
+            ] = States.input_cat_for_create_goal
             self.send_all_categories(message, tg_user)
         else:
-            self.tg_client.send_message(message.chat.id, "Неизвестная команда :V")
+            self.tg_client.send_message(
+                message.chat.id, "Неизвестная команда :V"
+            )
 
     def send_tasks(self, message: Message, tg_user: TgUser):
-        goals = Goal.objects.filter(user=tg_user.user, category__is_deleted=False).exclude(status=Goal.Status.archived)
+        goals = Goal.objects.filter(
+            user=tg_user.user, category__is_deleted=False
+        ).exclude(status=Goal.Status.archived)
         if goals.count() > 0:
             msg = "\n".join(f"#{goal.id} {goal.title}" for goal in goals)
             self.tg_client.send_message(message.chat.id, msg)
         else:
-            self.tg_client.send_message(message.chat.id, "У вас нет целей ( ・ˍ・)")
+            self.tg_client.send_message(
+                message.chat.id, "У вас нет целей ( ・ˍ・)"
+            )
 
     def send_all_categories(self, message: Message, tg_user: TgUser):
-        categories = GoalCategory.objects.filter(board__participants__user=tg_user.user, is_deleted=False)
+        categories = GoalCategory.objects.filter(
+            board__participants__user=tg_user.user, is_deleted=False
+        )
         if categories.count() > 0:
-            msg = "Ваши категории\n" + "\n".join(f"#{cat.id} `{cat.title}`" for cat in categories)
-            self.tg_client.send_message(message.chat.id, msg, parse_mode='Markdown')
+            msg = "Ваши категории\n" + "\n".join(
+                f"#{cat.id} `{cat.title}`" for cat in categories
+            )
+            self.tg_client.send_message(
+                message.chat.id, msg, parse_mode="Markdown"
+            )
         else:
-            self.tg_client.send_message(message.chat.id, "У вас нет категорий ( ・ˍ・)")
+            self.tg_client.send_message(
+                message.chat.id, "У вас нет категорий ( ・ˍ・)"
+            )
             self.states_storage[tg_user.tg_id] = States.idle
 
-    def input_cat_for_create_goal_state(self, message: Message, tg_user: TgUser):
-        if message.text == '/cancel':
+    def input_cat_for_create_goal_state(
+        self, message: Message, tg_user: TgUser
+    ):
+        if message.text == "/cancel":
             self.goals_for_create.pop(tg_user.tg_id, None)
             self.cancel(message, tg_user)
             return
 
-        category = GoalCategory.objects.filter(title=message.text, board__participants__user=tg_user.user,
-                                               is_deleted=False).first()
+        category = GoalCategory.objects.filter(
+            title=message.text,
+            board__participants__user=tg_user.user,
+            is_deleted=False,
+        ).first()
         self.goals_for_create[tg_user.tg_id] = {"cat": None}
         if category:
             self.goals_for_create[tg_user.tg_id]["cat"] = category
             self.tg_client.send_message(message.chat.id, "Отлично!")
-            self.tg_client.send_message(message.chat.id, "Теперь придумайте название цели")
-            self.states_storage[tg_user.tg_id] = States.input_title_for_create_goal
+            self.tg_client.send_message(
+                message.chat.id, "Теперь придумайте название цели"
+            )
+            self.states_storage[
+                tg_user.tg_id
+            ] = States.input_title_for_create_goal
             return
         else:
-            self.tg_client.send_message(message.chat.id, "У вас нет такой категории :V\nПопробуйте еще раз :D")
+            self.tg_client.send_message(
+                message.chat.id,
+                "У вас нет такой категории :V\nПопробуйте еще раз :D",
+            )
 
-    def input_title_for_create_goal_state(self, message: Message, tg_user: TgUser):
-        if message.text == '/cancel':
+    def input_title_for_create_goal_state(
+        self, message: Message, tg_user: TgUser
+    ):
+        if message.text == "/cancel":
             self.goals_for_create.pop(tg_user.tg_id, None)
             self.cancel(message, tg_user)
             return
 
         category: GoalCategory = self.goals_for_create[tg_user.tg_id]["cat"]
-        goal = Goal.objects.create(user=category.user, title=message.text, category=category)
-        self.tg_client.send_message(message.chat.id,
-                                    "Ура! Ваша цель создана:\n" +
-                                    f"http://yuzudev.ga/boards/{category.board.id}/goals?goal={goal.id}")
+        goal = Goal.objects.create(
+            user=category.user, title=message.text, category=category
+        )
+        self.tg_client.send_message(
+            message.chat.id,
+            "Ура! Ваша цель создана:\n"
+            + f"http://yuzudev.ga/boards/{category.board.id}/goals?goal={goal.id}",
+        )
         self.states_storage[tg_user.tg_id] = States.idle
 
     def cancel(self, message: Message, tg_user: TgUser):
