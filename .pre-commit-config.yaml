@@ -44,7 +44,7 @@ repos:
     #             # FI58 __future__ import "annotations" present
     #         # flake8-pytest-style
     #             # PT013 found incorrect import of pytest, use simple 'import pytest' instead
-    #         "--max-line-length=110",
+    #         "--max-line-length=79",
     #         "--per-file-ignores=tests/*.py:S101"
     #         # S101 Use of assert detected
     #     ]

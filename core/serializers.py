@@ -45,10 +45,12 @@ class LoginUserSerializer(serializers.Serializer):
     def validate(self, attrs: dict):
         username = attrs.get("username")
         password = attrs.get("password")
+        print(attrs)
         user = authenticate(username=username, password=password)
-
-        if not user:
+        print(user)
+        if user is None:
             raise ValidationError("username or password is incorrect")
+        print(user.username, user.password)
         attrs["user"] = user
         return attrs
 

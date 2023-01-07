@@ -4,3 +4,5 @@ autoflake
 pyupgrade
 reorder-python-imports
 yesqa
+pytest-django
+pytest-factoryboy

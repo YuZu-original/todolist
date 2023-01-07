@@ -115,8 +115,8 @@ AUTH_PASSWORD_VALIDATORS = [
 AUTH_USER_MODEL = "core.User"
 
 AUTHENTICATION_BACKENDS = (
-    "social_core.backends.vk.VKOAuth2",
     "django.contrib.auth.backends.ModelBackend",
+    "social_core.backends.vk.VKOAuth2",
 )
 
 # Social
