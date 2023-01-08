@@ -1,9 +1,18 @@
 import factory
+from django.utils import timezone
 
 from core.models import User
 from goals.models import Board
 from goals.models import BoardParticipant
 from goals.models import GoalCategory
+
+
+class DatesFactoryMixin(factory.django.DjangoModelFactory):
+    class Meta:
+        abstract = True
+
+    created = factory.LazyFunction(timezone.now)
+    updated = factory.LazyFunction(timezone.now)
 
 
 class UserFactory(factory.django.DjangoModelFactory):
@@ -19,14 +28,14 @@ class UserFactory(factory.django.DjangoModelFactory):
         return manager.create_user(*args, **kwargs)
 
 
-class BoardFactory(factory.django.DjangoModelFactory):
+class BoardFactory(DatesFactoryMixin):
     class Meta:
         model = Board
 
     title = factory.Faker("sentence", nb_words=5)
 
 
-class BoardParticipantFactory(factory.django.DjangoModelFactory):
+class BoardParticipantFactory(DatesFactoryMixin):
     class Meta:
         model = BoardParticipant
 
@@ -34,7 +43,7 @@ class BoardParticipantFactory(factory.django.DjangoModelFactory):
     user = factory.SubFactory(UserFactory)
 
 
-class GoalCategoryFactory(factory.django.DjangoModelFactory):
+class GoalCategoryFactory(DatesFactoryMixin):
     class Meta:
         model = GoalCategory
 
