@@ -4,6 +4,7 @@ from django.utils import timezone
 from core.models import User
 from goals.models import Board
 from goals.models import BoardParticipant
+from goals.models import Goal
 from goals.models import GoalCategory
 
 
@@ -50,3 +51,12 @@ class GoalCategoryFactory(DatesFactoryMixin):
     board = factory.SubFactory(BoardFactory)
     title = factory.Faker("sentence", nb_words=3)
     user = factory.SubFactory(UserFactory)
+
+
+class GoalFactory(DatesFactoryMixin):
+    class Meta:
+        model = Goal
+
+    user = factory.SubFactory(UserFactory)
+    category = factory.SubFactory(GoalCategoryFactory)
+    title = factory.Faker("sentence", nb_words=5)

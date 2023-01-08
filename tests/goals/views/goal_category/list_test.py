@@ -25,7 +25,9 @@ def get_expected_response(categories, do_sort=True):
             }
         )
     if do_sort:
-        return sorted(expected_response, key=lambda x: x["title"])
+        return sorted(
+            expected_response, key=lambda x: (x["title"], x["created"])
+        )
     return expected_response
 
 
@@ -91,3 +93,25 @@ def test_goal_category_list_with_many_users_and_one_board(
 
         assert response.status_code == 200
         assert response.data == expected_response
+
+
+@pytest.mark.django_db
+def test_goal_category_list_with_another_auth_user(
+    user_factory,
+    get_auth_client,
+    board_participant_factory,
+    goal_category_factory,
+):
+    user1 = user_factory()
+    user2 = user_factory()
+    board_participant = board_participant_factory(user=user1)
+    categories = goal_category_factory.create_batch(
+        5, board=board_participant.board, user=user1
+    )
+
+    auth_client = get_auth_client(user2)
+
+    response = auth_client.get("/goals/goal_category/list")
+
+    assert response.status_code == 200
+    assert response.data == []

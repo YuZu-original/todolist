@@ -10,3 +10,4 @@ pyproject.toml
 requirements-dev.txt
 pytests.ini
 tests/
+.pytest_cache/
