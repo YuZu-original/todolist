@@ -56,7 +56,7 @@ def test_goal_category_detail_with_not_auth_user(
 
 
 @pytest.mark.django_db
-def test_goal_category_detail_with_another_user(
+def test_goal_category_detail_with_another_auth_user(
     user_factory,
     get_auth_client,
     board_participant_factory,
