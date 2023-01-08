@@ -68,3 +68,9 @@ repos:
       entry: yesqa
       language: system
       types: [python]
+
+    - id: tests
+      name: Run tests
+      entry: "bash tests.sh"
+      language: system
+      verbose: true
