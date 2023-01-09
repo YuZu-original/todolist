@@ -6,6 +6,7 @@ from goals.models import Board
 from goals.models import BoardParticipant
 from goals.models import Goal
 from goals.models import GoalCategory
+from goals.models import GoalComment
 
 
 class DatesFactoryMixin(factory.django.DjangoModelFactory):
@@ -60,3 +61,12 @@ class GoalFactory(DatesFactoryMixin):
     user = factory.SubFactory(UserFactory)
     category = factory.SubFactory(GoalCategoryFactory)
     title = factory.Faker("sentence", nb_words=5)
+
+
+class GoalCommentFactory(DatesFactoryMixin):
+    class Meta:
+        model = GoalComment
+
+    user = factory.SubFactory(UserFactory)
+    goal = factory.SubFactory(GoalFactory)
+    text = factory.Faker("sentence", nb_words=10)
