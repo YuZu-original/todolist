@@ -48,7 +48,7 @@ def test_goal_category_list(
 
     auth_client = get_auth_client(user)
 
-    response = auth_client.get(f"/goals/goal_category/list")
+    response = auth_client.get("/goals/goal_category/list")
 
     assert response.status_code == 200
     assert response.data == expected_response
@@ -89,7 +89,7 @@ def test_goal_category_list_with_many_users_and_one_board(
     for user in (user1, user2, user3):
         auth_client = get_auth_client(user)
 
-        response = auth_client.get(f"/goals/goal_category/list")
+        response = auth_client.get("/goals/goal_category/list")
 
         assert response.status_code == 200
         assert response.data == expected_response
