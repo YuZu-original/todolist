@@ -14,6 +14,8 @@ from goals.models import GoalComment
 
 
 class BoardParticipantSerializer(serializers.ModelSerializer):
+    """Serializer for `BoardParticipant`"""
+
     role = serializers.ChoiceField(
         required=True, choices=BoardParticipant.editable_choices
     )
@@ -31,6 +33,8 @@ class BoardParticipantSerializer(serializers.ModelSerializer):
 
 
 class BoardCreateSerializer(serializers.ModelSerializer):
+    """Serializer for creating `Board`"""
+
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
@@ -48,6 +52,8 @@ class BoardCreateSerializer(serializers.ModelSerializer):
 
 
 class BoardSerializer(serializers.ModelSerializer):
+    """Serializer for `Board`"""
+
     participants = BoardParticipantSerializer(many=True)
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
@@ -95,6 +101,8 @@ class BoardSerializer(serializers.ModelSerializer):
 
 
 class BoardListSerializer(serializers.ModelSerializer):
+    """Serializer for list of `Board`"""
+
     class Meta:
         model = Board
         fields = "__all__"
@@ -104,6 +112,8 @@ class BoardListSerializer(serializers.ModelSerializer):
 
 
 class GoalCategoryCreateSerializer(serializers.ModelSerializer):
+    """Serializer for creating `GoalCategory`"""
+
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
@@ -129,6 +139,8 @@ class GoalCategoryCreateSerializer(serializers.ModelSerializer):
 
 
 class GoalCategorySerializer(serializers.ModelSerializer):
+    """Serializer for `GoalCategory`"""
+
     user = UserSerializer(read_only=True)
 
     class Meta:
@@ -141,6 +153,8 @@ class GoalCategorySerializer(serializers.ModelSerializer):
 
 
 class GoalCreateSerializer(serializers.ModelSerializer):
+    """Serializer for creating `Goal`"""
+
     category = serializers.PrimaryKeyRelatedField(
         queryset=GoalCategory.objects.all()
     )
@@ -172,6 +186,8 @@ class GoalCreateSerializer(serializers.ModelSerializer):
 
 
 class GoalSerializer(serializers.ModelSerializer):
+    """Serializer for `Goal`"""
+
     user = UserSerializer(read_only=True)
 
     class Meta:
@@ -196,6 +212,8 @@ class GoalSerializer(serializers.ModelSerializer):
 
 
 class CommentCreateSerializer(serializers.ModelSerializer):
+    """Serializer for creating `GoalComment`"""
+
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
@@ -219,6 +237,8 @@ class CommentCreateSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    """Serializer for `GoalComment`"""
+
     user = UserSerializer(read_only=True)
 
     class Meta:

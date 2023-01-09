@@ -5,6 +5,8 @@ from core.models import User
 
 
 class DatesModelMixin(models.Model):
+    """`DatesModelMixin` add `created` and `updated` fields. These fields will update automatically on `save()`."""
+
     class Meta:
         abstract = True
 
