@@ -20,7 +20,7 @@ def test_goal_comment_detail(
     expected_response = {
         "id": goal_comment.id,
         "text": goal_comment.text,
-        "goal": goal_comment.id,
+        "goal": goal_comment.goal.id,
         "created": goal_comment.created.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
         "updated": goal_comment.created.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
         "user": {
