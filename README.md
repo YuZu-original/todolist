@@ -14,7 +14,10 @@ Site: **[yuzudev.ga](http://yuzudev.ga/)**
 - Pip
 - Docker
 
-If you want to use VK login, you must configure `SOCIAL_AUTH_VK_OAUTH2_KEY` and `SOCIAL_AUTH_VK_OAUTH2_SECRET` in `.env`. [https://dev.vk.com/mini-apps/management/settings](https://dev.vk.com/mini-apps/management/settings)
+> **Note**
+> If you want to use VK login, you must configure `SOCIAL_AUTH_VK_OAUTH2_KEY` and `SOCIAL_AUTH_VK_OAUTH2_SECRET` in `.env`. [https://dev.vk.com/mini-apps/management/settings](https://dev.vk.com/mini-apps/management/settings)
+> 
+> You can also add your own `BOT_TOKEN` for the Telegram bot.
 ## 🕹 Usage
 
 ### Start
