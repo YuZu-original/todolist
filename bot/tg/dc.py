@@ -11,7 +11,7 @@ class MessageFrom:
     id: int
     first_name: str
     last_name: str | None
-    username: str
+    username: str | None
 
     class Meta:
         unknown = EXCLUDE
